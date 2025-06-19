@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drink and Derive</title>
+  <style>
+    body {
+      background-color: #f5f1ec;
+      font-family: 'Georgia', serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url('drive.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .game-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 20px 30px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #5e4b3c;
+    }
+
+    #question-text {
+      animation: wobble 1.5s infinite ease-in-out;
+    }
+
+    @keyframes wobble {
+      0% { transform: rotate(-1deg); }
+      25% { transform: rotate(1.5deg); }
+      50% { transform: rotate(-1.5deg); }
+      75% { transform: rotate(1deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    #drunk-level {
+      font-weight: bold;
+      color: #a33;
+      margin-bottom: 10px;
+    }
+
+    #question {
+      font-size: 1.25em;
+      margin: 20px 0;
+      color: #3e3e3e;
+    }
+
+    .option-button {
+      background-color: #dcd2c1;
+      color: #3e3e3e;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .option-button:hover {
+      background-color: #c3b9a6;
+    }
+
+    #feedback {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Drink and Derive</h1>
+    <div id="drunk-level">🍺 Drunk Level: 0</div>
+    <div id="question-box">
+      <p id="question-text">Loading question...</p>
+      <div id="options-container"></div>
+      <div id="feedback"></div>
+      <button onclick="nextQuestion()">Next</button>
+    </div>
+  </div>
+
+  <script>
+    let drunkLevel = 0;
+
+    const questions = [
+      {
+        question: "What is the derivative of sin(x)?",
+        options: ["cos(x)", "-sin(x)", "sec^2(x)"],
+        answer: "cos(x)"
+      },
+      {
+        question: "What is the integral of 1/x?",
+        options: ["ln(x)", "ln|x|", "1/x^2"],
+        answer: "ln|x|"
+      },
+      {
+        question: "What’s the derivative of x^2?",
+        options: ["x", "2x", "x^3"],
+        answer: "2x"
+      },
+      {
+        question: "What is the antiderivative of 2x^3?",
+        options: ["1/2 x^4", "1/4 x^4", "2x^2"],
+        answer: "1/2 x^4"
+      }
+    ];
+
+    let currentQuestion = 0;
+
+    function displayQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("question-text").innerText = q.question;
+
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = ""; // clear old buttons
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-button";
+        btn.innerText = option;
+        btn.onclick = () => checkAnswer(option);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById("feedback").innerText = "";
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentQuestion].answer;
+      const feedback = document.getElementById("feedback");
+      const drunkMeter = document.getElementById("drunk-level");
+
+      if (selected === correct) {
+        feedback.textContent = '✨ Correct! Grab another drink and run!';
+        feedback.style.color = 'green';
+      } else {
+        drunkLevel++;
+        feedback.textContent = '🚨 Wrong! Hope you like sleeping in a cell...';
+        feedback.style.color = 'darkred';
+        drunkMeter.innerText = `🍺 Drunk Level: ${drunkLevel}`;
+
+        if (drunkLevel >= 3) {
+          alert("💀 You got too drunk and the cops caught you! Game over.");
+          location.reload();
+        }
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        displayQuestion();
+      } else {
+        document.getElementById("question-text").innerText = "You’ve finished all the questions!";
+        document.getElementById("options-container").innerHTML = "";
+        document.getElementById("feedback").innerText = "🎉 Nice work!";
+      }
+    }
+
+    window.onload = displayQuestion;
+  </script>
+</body>
+</html>
